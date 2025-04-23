@@ -45,12 +45,3 @@ def login():
     return user, password, accountName
 
 choice = inputChoice()
-
-
-if choice == 1:
-    login()
-elif choice == 2:
-    newAccount()
-
- 
-
