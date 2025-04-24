@@ -4,48 +4,45 @@ import string
 
 
 
-def newAccount():
-
-    email = input("what is your email")
-    def sendVerification():
-        length = 5
-        characters = string.ascii_letters + string.digits
-        code = ''.join(random.choice(characters) for i in range(length))
-        verify = code
+email = input("what is your email")
+def sendVerification():
+    length = 5
+    characters = string.ascii_letters + string.digits
+    code = ''.join(random.choice(characters) for i in range(length))
+    verify = code
+    inputVerification = input(f"please insert varification code to identify {code}")
+    while inputVerification != verify:
         inputVerification = input(f"please insert varification code to identify {code}")
-        while inputVerification != verify:
-            inputVerification = input(f"please insert varification code to identify {code}")
-            
-    sendVerification()  
-    user = input("what is your name")
-    username = input("what is your username?")
-    def passwordverification():
-        option = input("do you want 1. Random password generator or 2. manual password")
-        while option !=1 or option!= 2:
-            option = input("invalid choice try again")
-        if option == 2:
+        
+sendVerification()  
+user = input("what is your name")
+username = input("what is your username?")
+def passwordverification():
+    option = input("do you want 1. Random password generator or 2. manual password")
+    while option !=1 or option!= 2:
+        option = input("invalid choice try again")
+    if option == 2:
+        initialPassword = input("what do you want your password to be")
+        verifyPassword = input("please state your password for verification")
+        while initialPassword == verifyPassword:
+            print("invalid password try again")
             initialPassword = input("what do you want your password to be")
             verifyPassword = input("please state your password for verification")
-            while initialPassword == verifyPassword:
-                print("invalid password try again")
-                initialPassword = input("what do you want your password to be")
-                verifyPassword = input("please state your password for verification")
-            item = verifyPassword
-        elif option ==1:
-            length = int(input("how long do you want the password"))
-            characters = string.ascii_letters
-            password = ''.join(random.choice(characters)for i in range(length))
-            item = password
-        return item
-    password = passwordverification()
-    hint = input("what hint would you like incase you forget your password")
-    category = input("what category would you like this account to be? home, work, entertainment, bills, etc")
-    
-    with open("storage.csv","a") as file:
-        lineToWrite = f"{user}, {username}, {password}, {hint}, {category}"
-        file.write(lineToWrite)
-    
-    return
+        item = verifyPassword
+    elif option ==1:
+        length = int(input("how long do you want the password"))
+        characters = string.ascii_letters
+        password = ''.join(random.choice(characters)for i in range(length))
+        item = password
+    return item
+password = passwordverification()
+hint = input("what hint would you like incase you forget your password")
+category = input("what category would you like this account to be? home, work, entertainment, bills, etc")
+
+with open("storage.csv","a") as file:
+    lineToWrite = f"{user}, {username}, {password}, {hint}, {category}"  #account name/title
+    file.write(lineToWrite)
+
     
     
 #def login():
