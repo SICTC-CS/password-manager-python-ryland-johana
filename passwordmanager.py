@@ -3,8 +3,58 @@ import random
 import string
 
 
+errors = 3
+def login(errors):
+    NV = False
+    NP = False
+    user = input("what is your Name")
+    password = input("what is your password")
+    
+    with open("storage.csv","r") as file:
+        for eachline in file:
+            name,PersonalPassword = eachline.rstrip().split(", ")
+            if user == name:
+                NV = True
+            if password == PersonalPassword:
+                NP = True
+        if NP== False or NV == False:
+            errors = errors - 1
+            print("Incorrect password or username try again")
+            print(f"{errors} more chances to try again")
+            login(errors)
+            
+                
 
-email = input("what is your email")
+
+
+def signUp():
+    
+    user = input("what is your name")
+    email = input("what is your email?")
+    sendVerification()
+    password = passwordverification()
+    hint = ("what hint would you like to find your password?")
+    with open("storage.csv","a") as file:
+        lineToWrite = f"{user}, {password}, {email}, {hint}"  #account name/title
+        file.write(lineToWrite)
+    
+    
+
+
+option = input("1.Login, 2.Sign up 3.hint")
+if option == 1:
+    login()
+elif option == 2:
+    signUp()
+elif option ==3:
+    showHint()
+
+
+
+
+
+
+
 def sendVerification():
     length = 5
     characters = string.ascii_letters + string.digits
@@ -15,8 +65,8 @@ def sendVerification():
         inputVerification = input(f"please insert varification code to identify {code}")
         
 sendVerification()  
-user = input("what is your name")
-username = input("what is your username?")
+
+
 def passwordverification():
     option = input("do you want 1. Random password generator or 2. manual password")
     while option !=1 or option!= 2:
@@ -24,17 +74,29 @@ def passwordverification():
     if option == 2:
         initialPassword = input("what do you want your password to be")
         verifyPassword = input("please state your password for verification")
-        while initialPassword == verifyPassword:
+        while initialPassword != verifyPassword:
             print("invalid password try again")
             initialPassword = input("what do you want your password to be")
             verifyPassword = input("please state your password for verification")
         item = verifyPassword
     elif option ==1:
-        length = int(input("how long do you want the password"))
-        characters = string.ascii_letters
-        password = ''.join(random.choice(characters)for i in range(length))
+        satisfied = False
+        while satisfied != True:
+            length = int(input("how long do you want the password"))
+            characters = string.ascii_letters
+            password = ''.join(random.choice(characters)for i in range(length))
+            print(password)
+            justify = input("are you satisfied with the password if so press 1 if not press 2")
+            if justify == 1:
+                satisfied = True
         item = password
     return item
+
+
+
+
+username = input("what is your username?")
+
 password = passwordverification()
 hint = input("what hint would you like incase you forget your password")
 category = input("what category would you like this account to be? home, work, entertainment, bills, etc")
@@ -45,13 +107,7 @@ with open("storage.csv","a") as file:
 
     
     
-#def login():
-    
-    user = input("what is your username")
-    password = input("what is your password")
-    accountName = input("what is your accountName")
-    
-    return user, password, accountName
+
 
 #f(x)
 #csv- comma seperated values(data seperated by commas)
