@@ -4,50 +4,80 @@ import string
 
 
 errors = 3
-def login(errors):
+
+clear = False
+
+
+
+
+def login():
+    global clear
+    global errors
+    E = errors
     NV = False
     NP = False
-    user = input("what is your Name")
-    password = input("what is your password")
-    
-    with open("storage.csv","r") as file:
-        for eachline in file:
-            name,PersonalPassword = eachline.rstrip().split(", ")
-            if user == name:
-                NV = True
-            if password == PersonalPassword:
-                NP = True
-        if NP== False or NV == False:
-            errors = errors - 1
+    while NP == False and NV == False or errors >0:        
+        user = input("what is your Name")
+        password = input("what is your password")
+        with open("storage.csv","r") as file:
+            Name = []
+            PersonalPassword = []
+            for eachline in file:
+                words = eachline.rstrip().split(", ")
+                Name.append(words[0])
+                PersonalPassword.append(words[1])
+        print(Name)
+        print(user)
+        if user == Name:
+            NV = True
+        if password == PersonalPassword:
+            NP = True
+        if NV == True and NP == True:
+            clear = True
+        elif NP== False or NV == False:
+            E -= 1
+            print(NP)
+            print(NV)
             print("Incorrect password or username try again")
-            print(f"{errors} more chances to try again")
-            login(errors)
-            
-                
+            print(f"{E} more chances to try again")
+        if E == 0:
+            print("attempts are gone. goodbye.")
+            clear = False
+            break
+    
+    return clear
 
 
 
 def signUp():
-    
+    global clear
     user = input("what is your name")
     email = input("what is your email?")
     sendVerification()
     password = passwordverification()
-    hint = ("what hint would you like to find your password?")
+    hint = input("what hint would you like to find your password?")
     with open("storage.csv","a") as file:
         lineToWrite = f"{user}, {password}, {email}, {hint}"  #account name/title
         file.write(lineToWrite)
+    clear = True
+    return clear
     
     
 
+def showHint():
+    while True:
+        email = input("what is your email? press 3 to go back")
+        with open("storage.csv","r") as file:
+            for i in file:
+                words = i.rstrip().split(", ")
+            if email == words[3]:
+                print(words[4])
+                break
+            elif email == "3":
+                break
+                 
 
-option = input("1.Login, 2.Sign up 3.hint")
-if option == 1:
-    login()
-elif option == 2:
-    signUp()
-elif option ==3:
-    showHint()
+
 
 
 
@@ -60,18 +90,17 @@ def sendVerification():
     characters = string.ascii_letters + string.digits
     code = ''.join(random.choice(characters) for i in range(length))
     verify = code
-    inputVerification = input(f"please insert varification code to identify {code}")
+    inputVerification = input(f"please insert varification code to identify {code}   ")
     while inputVerification != verify:
-        inputVerification = input(f"please insert varification code to identify {code}")
+        inputVerification = input(f"please insert varification code to identify {code}   ")
         
-sendVerification()  
+
 
 
 def passwordverification():
-    option = input("do you want 1. Random password generator or 2. manual password")
-    while option !=1 or option!= 2:
-        option = input("invalid choice try again")
-    if option == 2:
+    option1 = input("do you want 1. Random password generator or 2. manual password")
+        
+    if option1 == "2":
         initialPassword = input("what do you want your password to be")
         verifyPassword = input("please state your password for verification")
         while initialPassword != verifyPassword:
@@ -79,7 +108,7 @@ def passwordverification():
             initialPassword = input("what do you want your password to be")
             verifyPassword = input("please state your password for verification")
         item = verifyPassword
-    elif option ==1:
+    elif option1 == "1":
         satisfied = False
         while satisfied != True:
             length = int(input("how long do you want the password"))
@@ -87,23 +116,22 @@ def passwordverification():
             password = ''.join(random.choice(characters)for i in range(length))
             print(password)
             justify = input("are you satisfied with the password if so press 1 if not press 2")
-            if justify == 1:
+            if justify == "1":
                 satisfied = True
         item = password
+    else:
+        option1 = input("invalid choice try again")
     return item
 
 
 
 
-username = input("what is your username?")
 
-password = passwordverification()
-hint = input("what hint would you like incase you forget your password")
-category = input("what category would you like this account to be? home, work, entertainment, bills, etc")
-
-with open("storage.csv","a") as file:
-    lineToWrite = f"{user}, {username}, {password}, {hint}, {category}"  #account name/title
-    file.write(lineToWrite)
+#category = input("what category would you like this account to be? home, work, entertainment, bills, etc")
+#item = input("what is it that you are adding to this catagory")
+#with open("storage.csv","a") as file:
+#    lineToWrite = f"{category} {item}"  #account name/title
+#    file.write(lineToWrite)
 
     
     
@@ -171,9 +199,25 @@ def change_name():
             file.write(eachline)
 
 
+
+
+    
+
+
+
+
 #main loop
+
 while True:
     print("\n--- Password Manager ---")
+    while clear == False:
+        option = input("1.Login, 2.Sign up 3.hint")
+        if option == "1":
+            login()
+        elif option == "2":
+            signUp()
+        elif option =="3":
+            showHint()        
     print("1. Display Passwords")
     print("2. Add Account")
     print("3. Login")
@@ -182,12 +226,12 @@ while True:
     choice = input("Choose an option (1-5): ").strip()
     if choice == "1":
         display_list()
-    elif choice == "2":
-        newAccount()
-    elif choice == "3":
-        count_items()
-    elif choice == "4":
-        change_name()
+    #elif choice == "2":
+        #newItem()
+    #elif choice == "3":
+        #count_items()
+    #elif choice == "4":
+        #change_name()
     elif choice == "5":
         print("Goodbye!")
         break
