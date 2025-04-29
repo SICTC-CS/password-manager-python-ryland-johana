@@ -1,7 +1,7 @@
 
 import random
 import string
-
+import os
 
 errors = 3
 
@@ -14,30 +14,25 @@ def login():
     global clear
     global errors
     E = errors
-    NV = False
     NP = False
-    while NP == False and NV == False or errors >0:        
+    while NP == False or E >0:        
         user = input("what is your Name")
         password = input("what is your password")
-        with open("storage.csv","r") as file:
-            Name = []
-            PersonalPassword = []
-            for eachline in file:
-                words = eachline.rstrip().split(", ")
-                Name.append(words[0])
-                PersonalPassword.append(words[1])
-        print(Name)
-        print(user)
-        if user == Name:
-            NV = True
-        if password == PersonalPassword:
-            NP = True
-        if NV == True and NP == True:
-            clear = True
-        elif NP== False or NV == False:
+        file = (f"{user}.csv")
+        if os.path.isfile(file):
+            with open(f"{user}.csv","r") as file:
+                PersonalPassword = []
+                for eachline in file:
+                    words = eachline.rstrip().split(", ")
+                    PersonalPassword.append(words[1])
+            print(user)
+            if password == PersonalPassword:
+                NP = True
+            if NP == True:
+                clear = True
+                CurrentUser = user
+        elif NP== False or not os.path.exists(file):
             E -= 1
-            print(NP)
-            print(NV)
             print("Incorrect password or username try again")
             print(f"{E} more chances to try again")
         if E == 0:
@@ -45,7 +40,7 @@ def login():
             clear = False
             break
     
-    return clear
+    return clear, currentUser
 
 
 
@@ -56,11 +51,12 @@ def signUp():
     sendVerification()
     password = passwordverification()
     hint = input("what hint would you like to find your password?")
-    with open("storage.csv","a") as file:
-        lineToWrite = f"{user}, {password}, {email}, {hint}"  #account name/title
+    with open(f"{user}.csv","w+") as file:
+        lineToWrite = f"{password}, {email}, {hint}"  #account name/title
         file.write(lineToWrite)
     clear = True
-    return clear
+    currentUser = user
+    return clear, currentUser
     
     
 
@@ -213,9 +209,9 @@ while True:
     while clear == False:
         option = input("1.Login, 2.Sign up 3.hint")
         if option == "1":
-            login()
+            currentUser=login()
         elif option == "2":
-            signUp()
+            currentUser=signUp()
         elif option =="3":
             showHint()        
     print("1. Display Passwords")
