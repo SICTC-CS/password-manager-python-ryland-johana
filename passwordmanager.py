@@ -46,11 +46,18 @@ def login():
 
 def signUp():
     global clear
-    user = input("what is your name")
-    email = input("what is your email?")
-    sendVerification()
-    password = passwordverification()
-    hint = input("what hint would you like to find your password?")
+    Sgc = False
+    while Sgc is False:
+        user = input("what is your name")
+        email = input("what is your email?")
+        sendVerification()
+        password = passwordverification()
+        hint = input("what hint would you like to find your password?")
+        file = (f"{user}.csv")
+        if os.path.isfile(file):
+            print("there is another user with this name try again")
+        else:
+            Sgc = True
     with open(f"{user}.csv","w+") as file:
         lineToWrite = f"{password}, {email}, {hint}"  #account name/title
         file.write(lineToWrite)
@@ -73,6 +80,22 @@ def showHint():
                 break
                  
 
+def passwordCheck(password):
+    #geeksforgeeks
+    symbol = ['$','@','#','%']
+    val = True
+    if len(password) < 6 or len(password) > 20:
+        val = False
+    if not any(char.isdigit() for char in password):
+        val = False
+    if not any(char.islower() for char in password):
+        val = False
+    if not any(char.isupper() for char in password):
+        val = False
+    if not any(char in symbol for char in password):
+        val = False
+    if val:
+        return val
 
 
 
@@ -98,6 +121,7 @@ def passwordverification():
         
     if option1 == "2":
         initialPassword = input("what do you want your password to be")
+        passwordCheck(initialPassword)
         verifyPassword = input("please state your password for verification")
         while initialPassword != verifyPassword:
             print("invalid password try again")
@@ -164,6 +188,55 @@ def display_list():
     Coal: {coal}
         """)
 
+
+
+def newItem():
+    global currentUser
+    CatOrItem = input("would you like to add 1.Catagory or 2.item")
+    if CatOrItem == "1":
+        catname = input("what name will your catagory have? ")
+        addItem = input("would you like to add a item to your list 1.yes  2.no")
+        if addItem == "1":
+            itemName = input(f"what item would you like to add to category {catname}? ")
+            with open(f"{currentUser}.csv","a") as file:
+                lineToWrite = f"{catname}: {itemName}"
+    elif CatOrItem == "2":
+        itemName = input(f"what item would you like to add?")
+        catname = input(f"what category would you like to add {itemName} to? ")
+        with open(f"{currentUser}.csv","a") as file:
+            lineToWrite = f"{itemName}"
+
+
+
+def deleteItems():
+    global currentUser
+    CatOrItem = input("would you like to delete 1.Catagory or 2.item")
+    if CatOrItem == "1":
+        catname = input("what is the name of the category? ")
+        #geekforgeek
+        with open(f"{currentUser}",'r') as read:
+            lines = read.readlines()
+            with open(f"{currentUser}",'w') as file:
+                for line in lines:
+                    if line.strip(" ") != f'{catname}':
+                        file.write(line)
+
+    elif CatOrItem == "2":
+        itemName = input(f"what item would you like to delete?")
+        catname = input(f"what category would you like to delete {itemName} from? ")
+        with open(f"{currentUser}.csv","a") as file:
+            lineToWrite = f"{itemName}"
+
+
+
+
+
+
+
+
+ 
+
+
 def add_to_list():
     name = input("Name: ")
     gift = input("toy or coal: ").lower()
@@ -222,12 +295,12 @@ while True:
     choice = input("Choose an option (1-5): ").strip()
     if choice == "1":
         display_list()
-    #elif choice == "2":
-        #newItem()
-    #elif choice == "3":
-        #count_items()
-    #elif choice == "4":
-        #change_name()
+    elif choice == "2":
+        newItem()
+    elif choice == "3":
+        deleteItems()
+    elif choice == "4":
+        change_name()
     elif choice == "5":
         print("Goodbye!")
         break
