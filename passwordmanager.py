@@ -225,13 +225,14 @@ def newItem():
     elif catOrItem == "2":
         cata = []
         item = []
-        itemName = input(f"what item would you like to add?")
+        itemName = input(f"what item would you like to add? ")
         catname = input(f"what category would you like to add {itemName} to? ")
         with open(f"{currentUser}.csv","r") as file:
             lines = file.readlines()
             for i in range(1,len(lines)):
-                catagory, items = lines[i].strip().split(" ")
+                catagory,items = lines[i].strip().split(" ").split(",")
                 cata.append(catagory)
+                item.append(items)
                 print(cata)
                 print(item)
             #if catname == catagory[0]:
