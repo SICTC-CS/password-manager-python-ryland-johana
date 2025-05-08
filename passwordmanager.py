@@ -3,7 +3,7 @@ import random
 import string
 import os
 
-errors = 3
+ERRORS = 3
 
 clear = False
 
@@ -12,33 +12,44 @@ clear = False
 
 def login():
     global clear
-    global errors
-    E = errors
-    NP = False
-    while NP == False or E >0:        
+    global ERRORS
+    e = ERRORS
+    np = False
+    currentUser = ""
+    while np == False or e >0:        
         user = input("what is your Name")
         password = input("what is your password")
         file = (f"{user}.csv")
         if os.path.isfile(file):
             with open(f"{user}.csv","r") as file:
-                PersonalPassword = []
+                personalpassword = []
                 for eachline in file:
                     words = eachline.rstrip().split(", ")
-                    PersonalPassword.append(words[1])
-            print(user)
-            if password == PersonalPassword:
-                NP = True
-            if NP == True:
+                    personalpassword.append(words[0])
+            print(personalpassword)
+            if password == personalpassword[0]:
+                np = True
+            if np == True:
                 clear = True
-                CurrentUser = user
-        elif NP== False or not os.path.exists(file):
-            E -= 1
+                currentUser = user
+                break
+            elif np== False:
+                e -=1
+                print("Incorrect password or username try again")
+                print(f"{e} more chances to try again")
+            elif e == 0:
+                print("attempts are gone. goodbye.")
+                clear = False
+                break
+        elif not os.path.exists(file):
+            e -= 1
             print("Incorrect password or username try again")
-            print(f"{E} more chances to try again")
-        if E == 0:
+            print(f"{e} more chances to try again")
+        if e == 0:
             print("attempts are gone. goodbye.")
-            clear = False
-            break
+            #from copiolet
+            exit()
+            
     
     return clear, currentUser
 
@@ -63,22 +74,25 @@ def signUp():
         file.write(lineToWrite)
     clear = True
     currentUser = user
-    return clear, currentUser
     
     
 
 def showHint():
     while True:
+        username = input("What is your user name.")
         email = input("what is your email? press 3 to go back")
-        with open("storage.csv","r") as file:
-            for i in file:
-                words = i.rstrip().split(", ")
-            if email == words[3]:
-                print(words[4])
-                break
-            elif email == "3":
-                break
-                 
+        file = (f"{username}.csv")
+        if os.path.isfile(file):
+            with open(f"{username}.csv","r") as letter:
+                for i in letter:
+                    words = i.rstrip().split(", ")
+                    print(words)
+                if email == words[1]:
+                    print(words[2])
+                    break
+                elif email == "3":
+                    break
+                    
 
 def passwordCheck(password):
     #geeksforgeeks
@@ -279,12 +293,14 @@ def change_name():
 
 while True:
     print("\n--- Password Manager ---")
-    while clear == False:
+    data=""
+    while len(data)==0:
         option = input("1.Login, 2.Sign up 3.hint")
         if option == "1":
-            currentUser=login()
+            data = login()
+            currentUser=data[1]
         elif option == "2":
-            currentUser=signUp()
+            signUp()
         elif option =="3":
             showHint()        
     print("1. Display Passwords")
