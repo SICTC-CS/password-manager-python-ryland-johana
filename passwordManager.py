@@ -11,7 +11,9 @@ clear = False
 
 
 def login():
+    global password
     global clear
+    
     global ERRORS
     e = ERRORS
     np = False
@@ -26,6 +28,7 @@ def login():
                 for eachline in file:
                     words = eachline.rstrip().split(", ")
                     personalpassword.append(words[0])
+            print(personalpassword)
             if password == personalpassword[0]:
                 np = True
             if np == True:
@@ -48,6 +51,7 @@ def login():
             print("attempts are gone. goodbye.")
             #from copiolet
             exit()
+    currentUser = user
             
     
     return clear, currentUser
@@ -55,6 +59,9 @@ def login():
 
 
 def signUp():
+    global password
+    global email
+    global hint
     global clear
     Sgc = False
     while Sgc is False:
@@ -77,6 +84,7 @@ def signUp():
     
 
 def showHint():
+    global words
     while True:
         username = input("What is your user name.")
         email = input("what is your email? press 3 to go back")
@@ -174,80 +182,69 @@ def passwordverification():
 #csv- comma seperated values(data seperated by commas)
 def display_list():
     print()
+    global password
+    global hint
     # read in the text file
     #with opentool(filename,mode) as alias
-    with open("storage.csv","r") as file:
+    with open(f"{currentUser}.csv","r") as file:
+        userInfo = currentUser.split(", ")
+        file = (f"{currentUser}.csv")
+        if os.path.isfile(file):
+            with open(f"{currentUser}.csv","r") as letter:
+                for i in letter:
+                    words = i.rstrip().split(", ")
+                    print(words)
+                if currentUser == words[1]:
+                    print(words[2])
     #output to the terminal the data
-        for eachLine in file:
-            #print each line without \n on right end
-            print(eachLine.rstrip())
+            #print each line without \n on right en
+        print(f'''Password: {password}
+Username: {userInfo[0]}
+Hint: {words[2]}''')
 #print out how many coal and toys we need
 #def count_items():
-    toys,coal = 0,0
+    # toys,coal = 0,0
     #read the text file
-    with open("TheList.csv","r")as file:
+    # with open("TheList.csv","r")as file:
         #look at 2nd peice of data
-        for eachLine in file:
-            #two var = eachline w/0 \n are split based on ", "
-            name,gift = eachLine.rstrip().split(", ")
-            data = eachLine.rstrip().split(", ")
-            if gift == "toy":
-                toys += 1
-            else:
-                coal +=1
+        # for eachLine in file:
+            # two var = eachline w/0 \n are split based on ", "
+            # name,gift = eachLine.rstrip().split(", ")
+            # data = eachLine.rstrip().split(", ")
+            # if gift == "toy":
+                # toys += 1
+            # else:
+                # coal +=1
             #puke results to terminal
-        print(f"""
-    Toys: {toys}
-    Coal: {coal}
-        """)
+    #     print(f"""
+    # Toys: {toys}
+    # Coal: {coal}
+    #     """)
 
 
 
 def newItem():
     global currentUser
-    
-    catOrItem = input("would you like to add 1.Catagory or 2.item")
-    print(catOrItem)
-    #while catOrItem != "1" or catOrItem != "2":
-    #    catOrItem = input("error incorrect input please try again 1.catagory or 2.item")
-    if catOrItem == "1":
+    CatOrItem = input("would you like to add 1.Catagory or 2.item")
+    if CatOrItem == "1":
         catname = input("what name will your catagory have? ")
         addItem = input("would you like to add a item to your list 1.yes  2.no")
         if addItem == "1":
             itemName = input(f"what item would you like to add to category {catname}? ")
             with open(f"{currentUser}.csv","a") as file:
                 lineToWrite = f"{catname}: {itemName}"
-                file.write(lineToWrite + "\n")
-        elif addItem == "2":
-            with open(f"{currentUser}.csv","a") as file:
-                lineToWrite = f"{catname}:"
-                file.write(lineToWrite +"\n")
-    elif catOrItem == "2":
-        cata = []
-        item = []
+    elif CatOrItem == "2":
         itemName = input(f"what item would you like to add?")
         catname = input(f"what category would you like to add {itemName} to? ")
-        with open(f"{currentUser}.csv","r") as file:
-            lines = file.readlines()
-            for i in range(1,len(lines)):
-                catagory, items = lines[i].strip().split(" ")
-                cata.append(catagory)
-                print(cata)
-                print(item)
-            #if catname == catagory[0]:
-            #    print(catname)
-            #if len(catagory)>=2:    
-            #    lineToWrite = f", {itemName}"
-            #else:
-            #    lineToWrite = f" {itemName}"
-            #catagory.append(lineToWrite)
-            
+        with open(f"{currentUser}.csv","a") as file:
+            lineToWrite = f"{itemName}"
+
 
 
 def deleteItems():
     global currentUser
-    catOrItem = input("would you like to delete 1.Catagory or 2.item")
-    if catOrItem == "1":
+    CatOrItem = input("would you like to delete 1.Catagory or 2.item")
+    if CatOrItem == "1":
         catname = input("what is the name of the category? ")
         #geekforgeek
         with open(f"{currentUser}",'r') as read:
@@ -257,7 +254,7 @@ def deleteItems():
                     if line.strip(" ") != f'{catname}':
                         file.write(line)
 
-    elif catOrItem == "2":
+    elif CatOrItem == "2":
         itemName = input(f"what item would you like to delete?")
         catname = input(f"what category would you like to delete {itemName} from? ")
         with open(f"{currentUser}.csv","a") as file:
@@ -344,13 +341,3 @@ while True:
         break
     else:
         print("Invalid choice. Please select a valid option.")
-
-
-
-
-
-
-
-
-
-
