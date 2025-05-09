@@ -8,6 +8,17 @@ ERRORS = 3
 clear = False
 
 
+#made by copiolet
+def checkCSVexist(file):
+    directoryFiles = os.listdir(".")
+    if file in directoryFiles:
+        return True
+    else:
+        return False
+
+
+
+
 
 
 def login():
@@ -20,9 +31,9 @@ def login():
         user = input("what is your Name")
         password = input("what is your password")
         #found casefold from copiolet (used to check caps precisly)
-        file = (f"{user.casefold()}.csv")
-        if os.path.isfile(file):
-            with open(f"{user.casefold()}.csv","r") as file:
+        file = (f"{user}.csv")
+        if checkCSVexist(file):
+            with open(f"{user}.csv","r") as file:
                 personalpassword = []
                 for eachline in file:
                     words = eachline.rstrip().split(", ")
@@ -41,7 +52,7 @@ def login():
                 print("attempts are gone. goodbye.")
                 clear = False
                 break
-        elif not os.path.exists(file):
+        elif not checkCSVexist(file):
             e -= 1
             print("Incorrect password or username try again")
             print(f"{e} more chances to try again")
@@ -118,6 +129,8 @@ def passwordCheck(password):
 
 
 
+
+
 def sendVerification():
     length = 5
     characters = string.ascii_letters + string.digits
@@ -168,7 +181,6 @@ def passwordverification():
 #    file.write(lineToWrite)
 
     
-    
 
 
 #f(x)
@@ -204,6 +216,28 @@ def display_list():
 
 
 
+
+def checkPassword(password):
+    global currentUser
+    with open(f"{currentUser}.csv","r") as file:
+        personalpassword = []
+        for eachline in file:
+            words = eachline.rstrip().split(", ")
+            personalpassword.append(words[0])
+        if password == personalpassword[0]:
+            return True
+        else:
+            print("error wrong password")
+            return False
+
+
+
+
+#copiolet
+def onlySpaces(item):
+    return item.isspace() or len(item) == 0
+
+
 def newItem():
     global currentUser
     catOrItem = input("would you like to add 1.Catagory or 2.item")
@@ -211,35 +245,54 @@ def newItem():
     #while catOrItem != "1" or catOrItem != "2":
     #    catOrItem = input("error incorrect input please try again 1.catagory or 2.item")
     if catOrItem == "1":
-        catname = input("what name will your catagory have? ")
-        itemName = input(f"what item would you like to add to category {catname}? ")
-        userName = input(f"what is the username for {itemName}? ")
-        id = input(f"what is the identity number of this item? ")
+        catname = input("what name will your catagory have? (required) ")
+        itemName = input(f"what item would you like to add to category {catname}? (required) ")
+        userName = input(f"what is the username for {itemName}? (required) ")
+        id = input(f"what is the identity number of this item? (required) ")
         description = input(f"what description will you have for this item? ")
-        with open(f"{currentUser}.csv","a") as file:
-            lineToWrite = f"{catname},{itemName},{userName},{id},{description}"
-            file.write(lineToWrite + "\n")
+        if onlySpaces(catname) or onlySpaces(itemName) or onlySpaces(userName) or onlySpaces(id):
+            print("error not all required paramiters are filld in properly")
+            pass
+        else:
+            if onlySpaces(description):
+                with open(f"{currentUser}.csv","a") as file:
+                    lineToWrite = f"{catname},{itemName},{userName},{id}"
+                    file.write(lineToWrite + "\n")
+            else:
+                with open(f"{currentUser}.csv","a") as file:
+                    lineToWrite = f"{catname},{itemName},{userName},{id},{description}"
+                    file.write(lineToWrite + "\n")
+            
+            
+            
+            
     elif catOrItem == "2":
-        itemName = input(f"what item would you like to add? ")
-        catname = input(f"what category would you like to add {itemName} to? ")
-        with open(f"{currentUser}.csv","r") as file:
-            lines = file.readlines()
-        for i in range(1,len(lines)):
-            catagory,item,user,id,des = lines[i].strip().split(",")
-            if catname == catagory:
-                lineToWrite = (f"{catname},{itemName},{user}{id},{des}")
-                lines[i] = lineToWrite
-            with open(f"{currentUser}.csv","w") as file:
-                for eachline in lines:
-                    file.write(eachline)
+        choice = input("are you adding 1.description or 2.no? ")
+        if choice =="1":
+            descrip = input("what will your description be? ")
+            catname = input("what is the catagory? ")
+            itemname = input("what is the item? ")
+            username = input("what is the user name? ")
+            idnumber = input("what is your id? ")
+            with open(f"{currentUser}.csv","r")as file:
+                lines = file.readlines()
+            for i in range(1,len(lines)):
+                try:
+                    catagory,item,user,id = lines[i].strip().split(",")
+                except:
+                    catagory,item,user,id,des = lines[i].strip().split(",")
+                if  idnumber == id and catname == catagory and itemname == item and username == user:
+                    lineToWrite = (f"{catagory},{item},{user},{id},{descrip}" + "\n")
+                    lines[i] = lineToWrite
+                with open(f"{currentUser}.csv","w")as file:
+                    for eachline in lines:
+                        file.write(eachline)
+        elif choice == "2":
+            pass
+
+ 
     
-            #if catname == catagory[0]:
-            #    print(catname)
-            #if len(catagory)>=2:    
-            #    lineToWrite = f", {itemName}"
-            #else:
-            #    lineToWrite = f" {itemName}"
-            #catagory.append(lineToWrite)
+            
             
 
 
@@ -262,22 +315,37 @@ def deleteItems():
         with open(f"{currentUser}.csv","r") as file:
             lines = file.readlines()
         for i in range(1,len(lines)):
-            catagory,item,user,id,des = lines[i].strip().split(",")
+            try:
+                catagory,item,user,id,des = lines[i].strip().split(",")
+            except:
+                catagory,item,user,id = lines[i].strip().split(",")
             if catname in catagory:
                 if itemName in catagory:
-                    lineToWrite = (f"{item},{user},{id},{des}")
-                    lines[i] = lineToWrite
+                    password = input("warning data will be deleted without this component password is required: ")
+                    if checkPassword(password):
+                        lines[i] = ""
+                    else:
+                        pass
                 elif itemName in item:
-                    lineToWrite = (f"{catname},{user}{id},{des}")
-                    lines[i] = lineToWrite
+                    password = input("warning data will be deleted without this component password is required: ")
+                    if checkPassword(password):
+                        lines[i] = ""
+                    else:
+                        pass
                 elif itemName in user:
-                    lineToWrite = (f"{catname},{item}{id},{des}")
-                    lines[i] = lineToWrite
+                    password = input("warning data will be deleted without this component password is required: ")
+                    if checkPassword(password):
+                        lines[i] = ""
+                    else:
+                        pass
                 elif itemName in id:
-                    lineToWrite = (f"{catname},{item}{user},{des}")
-                    lines[i] = lineToWrite
+                    password = input("warning data will be deleted without this component password is required: ")
+                    if checkPassword(password):
+                        lines[i] = ""
+                    else:
+                        pass
                 elif itemName in des:
-                    lineToWrite = (f"{catname},{item}{user},{id}")
+                    lineToWrite = (f"{catname},{item}{user},{id}" + "\n")
                     lines[i] = lineToWrite
             with open(f"{currentUser}.csv","w") as file:
                 for eachline in lines:
