@@ -19,9 +19,10 @@ def login():
     while np == False or e >0:        
         user = input("what is your Name")
         password = input("what is your password")
-        file = (f"{user}.csv")
+        #found casefold from copiolet (used to check caps precisly)
+        file = (f"{user.casefold()}.csv")
         if os.path.isfile(file):
-            with open(f"{user}.csv","r") as file:
+            with open(f"{user.casefold()}.csv","r") as file:
                 personalpassword = []
                 for eachline in file:
                     words = eachline.rstrip().split(", ")
@@ -205,36 +206,33 @@ def display_list():
 
 def newItem():
     global currentUser
-    
     catOrItem = input("would you like to add 1.Catagory or 2.item")
     print(catOrItem)
     #while catOrItem != "1" or catOrItem != "2":
     #    catOrItem = input("error incorrect input please try again 1.catagory or 2.item")
     if catOrItem == "1":
         catname = input("what name will your catagory have? ")
-        addItem = input("would you like to add a item to your list 1.yes  2.no")
-        if addItem == "1":
-            itemName = input(f"what item would you like to add to category {catname}? ")
-            with open(f"{currentUser}.csv","a") as file:
-                lineToWrite = f"{catname}: {itemName}"
-                file.write(lineToWrite + "\n")
-        elif addItem == "2":
-            with open(f"{currentUser}.csv","a") as file:
-                lineToWrite = f"{catname}:"
-                file.write(lineToWrite +"\n")
+        itemName = input(f"what item would you like to add to category {catname}? ")
+        userName = input(f"what is the username for {itemName}? ")
+        id = input(f"what is the identity number of this item? ")
+        description = input(f"what description will you have for this item? ")
+        with open(f"{currentUser}.csv","a") as file:
+            lineToWrite = f"{catname},{itemName},{userName},{id},{description}"
+            file.write(lineToWrite + "\n")
     elif catOrItem == "2":
-        cata = []
-        item = []
         itemName = input(f"what item would you like to add? ")
         catname = input(f"what category would you like to add {itemName} to? ")
         with open(f"{currentUser}.csv","r") as file:
             lines = file.readlines()
-            for i in range(1,len(lines)):
-                catagory,items = lines[i].strip().split(" ").split(",")
-                cata.append(catagory)
-                item.append(items)
-                print(cata)
-                print(item)
+        for i in range(1,len(lines)):
+            catagory,item,user,id,des = lines[i].strip().split(",")
+            if catname == catagory:
+                lineToWrite = (f"{catname},{itemName},{user}{id},{des}")
+                lines[i] = lineToWrite
+            with open(f"{currentUser}.csv","w") as file:
+                for eachline in lines:
+                    file.write(eachline)
+    
             #if catname == catagory[0]:
             #    print(catname)
             #if len(catagory)>=2:    
@@ -247,22 +245,43 @@ def newItem():
 
 def deleteItems():
     global currentUser
-    catOrItem = input("would you like to delete 1.Catagory or 2.item")
+    catOrItem = input("would you like to delete 1.full item or 2.part of one")
     if catOrItem == "1":
-        catname = input("what is the name of the category? ")
+        catname = input("what is the name of the category of the item you want to delete? ")
         #geekforgeek
-        with open(f"{currentUser}",'r') as read:
+        with open(f"{currentUser}.csv",'r') as read:
             lines = read.readlines()
-            with open(f"{currentUser}",'w') as file:
+            with open(f"{currentUser}.csv",'w') as file:
                 for line in lines:
-                    if line.strip(" ") != f'{catname}':
+                    if not f'{catname}' in line.strip().split(","):
                         file.write(line)
 
     elif catOrItem == "2":
-        itemName = input(f"what item would you like to delete?")
+        itemName = input(f"what item would you like to delete? ")
         catname = input(f"what category would you like to delete {itemName} from? ")
-        with open(f"{currentUser}.csv","a") as file:
-            lineToWrite = f"{itemName}"
+        with open(f"{currentUser}.csv","r") as file:
+            lines = file.readlines()
+        for i in range(1,len(lines)):
+            catagory,item,user,id,des = lines[i].strip().split(",")
+            if catname in catagory:
+                if itemName in catagory:
+                    lineToWrite = (f"{item},{user},{id},{des}")
+                    lines[i] = lineToWrite
+                elif itemName in item:
+                    lineToWrite = (f"{catname},{user}{id},{des}")
+                    lines[i] = lineToWrite
+                elif itemName in user:
+                    lineToWrite = (f"{catname},{item}{id},{des}")
+                    lines[i] = lineToWrite
+                elif itemName in id:
+                    lineToWrite = (f"{catname},{item}{user},{des}")
+                    lines[i] = lineToWrite
+                elif itemName in des:
+                    lineToWrite = (f"{catname},{item}{user},{id}")
+                    lines[i] = lineToWrite
+            with open(f"{currentUser}.csv","w") as file:
+                for eachline in lines:
+                    file.write(eachline)
 
 
 
@@ -327,8 +346,8 @@ while True:
         elif option =="3":
             showHint()        
     print("1. Display Passwords")
-    print("2. Add Account")
-    print("3. Login")
+    print("2. Add Items")
+    print("3. delete Items")
     print("4. Change the name or account email")
     print("5. Exit")
     choice = input("Choose an option (1-5): ").strip()
