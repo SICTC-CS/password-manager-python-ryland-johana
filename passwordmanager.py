@@ -187,32 +187,26 @@ def passwordverification():
 #csv- comma seperated values(data seperated by commas)
 def display_list():
     print()
+    global password
+    global currentUser
+    global hint
     # read in the text file
     #with opentool(filename,mode) as alias
-    with open("storage.csv","r") as file:
+    with open(f"{currentUser}.csv","r") as file:
+        userInfo = currentUser.split(", ")
+        file = (f"{currentUser}.csv")
+        if os.path.isfile(file):
+            with open(f"{currentUser}.csv","r") as letter:
+                for i in letter:
+                    words = i.rstrip().split(", ")
+                    print(words)
+                if currentUser == words[1]:
+                    print(words[2])
     #output to the terminal the data
-        for eachLine in file:
-            #print each line without \n on right end
-            print(eachLine.rstrip())
-#print out how many coal and toys we need
-#def count_items():
-    toys,coal = 0,0
-    #read the text file
-    with open("TheList.csv","r")as file:
-        #look at 2nd peice of data
-        for eachLine in file:
-            #two var = eachline w/0 \n are split based on ", "
-            name,gift = eachLine.rstrip().split(", ")
-            data = eachLine.rstrip().split(", ")
-            if gift == "toy":
-                toys += 1
-            else:
-                coal +=1
-            #puke results to terminal
-        print(f"""
-    Toys: {toys}
-    Coal: {coal}
-        """)
+            #print each line without \n on right en
+        print(f'''Password: {password}
+Username: {userInfo[0]}
+Hint: {words[2]}''')
 
 
 
