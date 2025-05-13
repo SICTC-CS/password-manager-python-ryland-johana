@@ -24,12 +24,13 @@ def checkCSVexist(file):
 def login():
     global clear
     global ERRORS
+    global password
     e = ERRORS
     np = False
     currentUser = ""
     while np == False or e >0:        
-        user = input("what is your Name")
-        password = input("what is your password")
+        user = input("what is your Name ")
+        password = input("what is your password ")
         #found casefold from copiolet (used to check caps precisly)
         file = (f"{user}.csv")
         if checkCSVexist(file):
@@ -70,11 +71,11 @@ def signUp():
     global clear
     Sgc = False
     while Sgc is False:
-        user = input("what is your name")
-        email = input("what is your email?")
+        user = input("what is your name ")
+        email = input("what is your email? ")
         sendVerification()
         password = passwordverification()
-        hint = input("what hint would you like to find your password?")
+        hint = input("what hint would you like to find your password? ")
         file = (f"{user}.csv")
         if os.path.isfile(file):
             print("there is another user with this name try again")
@@ -90,8 +91,8 @@ def signUp():
 
 def showHint():
     while True:
-        username = input("What is your user name.")
-        email = input("what is your email? press 3 to go back")
+        username = input("What is your user name. ")
+        email = input("what is your email? press 3 to go back ")
         file = (f"{username}.csv")
         if os.path.isfile(file):
             with open(f"{username}.csv","r") as letter:
@@ -144,30 +145,30 @@ def sendVerification():
 
 
 def passwordverification():
-    option1 = input("do you want 1. Random password generator or 2. manual password")
+    option1 = input("do you want 1. Random password generator or 2. manual password ")
         
     if option1 == "2":
-        initialPassword = input("what do you want your password to be")
+        initialPassword = input("what do you want your password to be ")
         passwordCheck(initialPassword)
-        verifyPassword = input("please state your password for verification")
+        verifyPassword = input("please state your password for verification ")
         while initialPassword != verifyPassword:
             print("invalid password try again")
-            initialPassword = input("what do you want your password to be")
-            verifyPassword = input("please state your password for verification")
+            initialPassword = input("what do you want your password to be ")
+            verifyPassword = input("please state your password for verification ")
         item = verifyPassword
     elif option1 == "1":
         satisfied = False
         while satisfied != True:
-            length = int(input("how long do you want the password"))
+            length = int(input("how long do you want the password "))
             characters = string.ascii_letters
             password = ''.join(random.choice(characters)for i in range(length))
             print(password)
-            justify = input("are you satisfied with the password if so press 1 if not press 2")
+            justify = input("are you satisfied with the password if so press 1 if not press 2 ")
             if justify == "1":
                 satisfied = True
         item = password
     else:
-        option1 = input("invalid choice try again")
+        option1 = input("invalid choice try again ")
     return item
 
 
@@ -202,12 +203,18 @@ def display_list():
                     print(words)
                 if currentUser == words[1]:
                     print(words[2])
+                    
+     
     #output to the terminal the data
             #print each line without \n on right en
         print(f'''Password: {password}
 Username: {userInfo[0]}
 Hint: {words[2]}''')
-
+        print("")
+        i = 3
+        while i < len(words):
+            print(words[i])
+            i +=1
 
 
 
@@ -234,7 +241,7 @@ def onlySpaces(item):
 
 def newItem():
     global currentUser
-    catOrItem = input("would you like to add 1.Catagory or 2.item")
+    catOrItem = input("would you like to add 1.Catagory or 2.item ")
     print(catOrItem)
     #while catOrItem != "1" or catOrItem != "2":
     #    catOrItem = input("error incorrect input please try again 1.catagory or 2.item")
@@ -250,11 +257,11 @@ def newItem():
         else:
             if onlySpaces(description):
                 with open(f"{currentUser}.csv","a") as file:
-                    lineToWrite = f"{catname},{itemName},{userName},{id}"
+                    lineToWrite = f", {catname}, {itemName}, {userName}, {id}"
                     file.write(lineToWrite + "\n")
             else:
                 with open(f"{currentUser}.csv","a") as file:
-                    lineToWrite = f"{catname},{itemName},{userName},{id},{description}"
+                    lineToWrite = f", {catname}, {itemName}, {userName}, {id}, {description}"
                     file.write(lineToWrite + "\n")
             
             
@@ -292,7 +299,7 @@ def newItem():
 
 def deleteItems():
     global currentUser
-    catOrItem = input("would you like to delete 1.full item or 2.part of one")
+    catOrItem = input("would you like to delete 1.full item or 2.part of one ")
     if catOrItem == "1":
         catname = input("what is the name of the category of the item you want to delete? ")
         #geekforgeek
@@ -355,35 +362,65 @@ def deleteItems():
  
 
 
-def add_to_list():
-    name = input("Name: ")
-    gift = input("toy or coal: ").lower()
-    #open the list by appending to it alias is file
-    with open("TheList.csv", "a") as file:
-        lineToWrite = f"{name}, {gift}\n"
-        #file write this string
-        file.write(lineToWrite)
+# def add_to_list():
+    # name = input("Name: ")
+    # gift = input("toy or coal: ").lower()
+    # #open the list by appending to it alias is file
+    # with open("TheList.csv", "a") as file:
+    #     lineToWrite = f"{name}, {gift}\n"
+    #     #file write this string
+    #     file.write(lineToWrite)
 
 def change_name():
+    global currentUser
+    global password
     #old and new name
-    old = input("Current name: ")
-    new = input("New name: ")
-    
-    #read the data- save the file to the list
-    with open("TheList.csv", "r") as file:
-        lines = file.readlines() #converst file to list
+    changeUser = input("Would you like to change your 1.username? ")
+    if changeUser == "1":
+        old = input("Current name: ")
+        new = input("New name: ")
+        
+        oldFile = f"{old}.csv"
+        newFile = f"{new}.csv"
+        
+        if os.path.exists(oldFile):
+            os.rename(oldFile, newFile)
+            currentUser = new
+            pass
+        else:
+                old = input("Current name: ")
+                new = input("New name: ")
 
-    #find the old name
-    for i in range(len(lines)):
-        name,gift = lines[i].strip().split(", ")
-        if name == old:
-            name = new
-            newData = f"{name}, {gift}\n"
-            lines[i] = newData
-    #reset the old to new name - overide the file
-    with open("TheList.csv","w") as file:
-        for eachline in lines:
-            file.write(eachline)
+    # elif changeUser == "2":
+    #     #read the data- save the file to the list
+       
+    #     username = input("What is your username? ")
+    #     newPassword = input("What is your new password? ")
+    #     checkUser = f"{username}.csv"
+    #     #find the old name
+
+    #     with open(f"{currentUser}.csv", "r") as file:
+    #         lines = file.readlines() #converst file to list
+
+    #     for i in range(len(lines)):
+    #             data = lines[i].strip().split(", ")
+    #             if checkUser == currentUser:
+    #     #             newData = f"{newPassword}\n"
+    #     #             lines[0] = newData
+    #                 # with open(f"{currentUser}.csv","w") as file:
+    #                 #     for eachline in lines:
+    #                 #         data = eachline.strip().split(", ")
+    #                         data[0] = newPassword 
+    #                         lines[i] = ", ".join(data) + "\n"
+    #                         # file.write(eachline)
+    #                         password = newPassword
+    #                         file.close()
+    #     #reset the old to new name - overide the file
+    #     with open(f"{currentUser}.csv", "w", newline="") as file:
+    #         file.writelines(data[0])
+
+
+        
 
 
 
@@ -399,7 +436,7 @@ while True:
     print("\n--- Password Manager ---")
     data=""
     while len(data)==0:
-        option = input("1.Login, 2.Sign up 3.hint")
+        option = input("1.Login, 2.Sign up 3.hint ")
         if option == "1":
             data = login()
             currentUser=data[1]
@@ -426,13 +463,3 @@ while True:
         break
     else:
         print("Invalid choice. Please select a valid option.")
-
-
-
-
-
-
-
-
-
-
